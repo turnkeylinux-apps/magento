@@ -1,0 +1,75 @@
+#!/bin/bash -ex
+
+ADMIN_NAME=admin
+ADMIN_PASS=turnkey1 # requires atleast 1 number, argh!
+ADMIN_MAIL=admin@example.com
+DOMAIN=127.0.0.1
+
+DB_NAME=magento
+DB_USER=magento
+DB_PASS=$(mcookie)
+
+WEBROOT=/var/www/magento
+
+# unpack tarball to webroot and set permissions
+tar -zxf /usr/local/src/magento*.tar.gz -C /var/www/
+rm -f /usr/local/src/magento*
+
+chown -R root:root $WEBROOT
+chown -R www-data:www-data $WEBROOT/var
+chown -R www-data:www-data $WEBROOT/media
+chown -R www-data:www-data $WEBROOT/app/etc
+
+# convenience execution variables
+MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
+MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
+
+# start mysql server
+/etc/init.d/mysql start
+
+# create database
+$MYSQL_ADMIN create $DB_NAME
+
+# create database user with privileges on the database
+$MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
+
+# update apache configuration
+a2dissite default
+a2ensite magento
+a2enmod rewrite
+
+# configure magento
+php -f $WEBROOT/install.php -- \
+    --license_agreement_accepted yes \
+    --locale en_US \
+    --timezone "Europe/London" \
+    --default_currency USD \
+    --db_host localhost \
+    --db_name $DB_NAME \
+    --db_user $DB_USER \
+    --db_pass $DB_PASS \
+    --url "http://$DOMAIN/" \
+    --secure_base_url "https://$DOMAIN/" \
+    --skip_url_validation yes \
+    --use_rewrites yes \
+    --use_secure yes \
+    --use_secure_admin yes \
+    --admin_firstname Store \
+    --admin_lastname Admin \
+    --admin_username $ADMIN_NAME \
+    --admin_password $ADMIN_PASS \
+    --admin_email "$ADMIN_MAIL" \
+    --admin_frontname admin \
+    --encryption_key $(mcookie)
+
+# create getting-started page
+$MYSQL_BATCH --execute "use $DB_NAME; update cms_page SET content = '<div class=\"page-title\"> <h2>Welcome to TurnKey Magento</h2> </div> <h3>Lets get you started:&nbsp;</h3> <p><span style=\"font-weight: normal; font-size: 12px;\"><br />-&nbsp;Log into the <a href=\"/admin\">administration panel</a> as <strong>$ADMIN_NAME</strong> and get going\!</span></p> <p><span style=\"font-weight: normal; font-size: 12px;\">-&nbsp;</span><a href=\"http://www.turnkeylinux.org/magento\">TurnKey Linux Magento appliance release notes</a></p> <p>-&nbsp;<a href=\"http://www.magentocommerce.com/wiki/welcome_to_the_magento_user_s_guide/welcome_to_the_magento_user_s_guide\">Magento user guide (everything you need to know to get started)</a></p> <p>-&nbsp;<a href=\"http://www.magentocommerce.com/knowledge-base\">Magento knowledge base (articles, tutorials, screencasts, documentation)</a></p>' where cms_page.page_id=2;"
+
+# bugfix: remove initial corrupted cache
+/etc/init.d/apache2 start
+rm -rf $WEBROOT/var/cache
+/etc/init.d/apache2 stop
+
+# stop mysql
+/etc/init.d/mysql stop
+
