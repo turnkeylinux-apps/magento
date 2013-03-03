@@ -1,0 +1,12 @@
+#!/bin/bash -ex
+
+dl() {
+    [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
+    cd $2; curl -L -f -O $PROXY $1; cd -
+}
+
+VER="1.7.0.2"
+URL="http://www.magentocommerce.com/downloads/assets/${VER}/magento-${VER}.tar.gz"
+
+dl $URL /usr/local/src
+
