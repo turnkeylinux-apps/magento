@@ -38,6 +38,10 @@ a2dissite default
 a2ensite magento
 a2enmod rewrite
 
+# bugfix: PHP Extensions "0" must be loaded
+CONF=$WEBROOT/app/code/core/Mage/Install/etc/config.xml
+sed -i "s|<pdo_mysql/>|<pdo_mysql>1</pdo_mysql>|" $CONF
+
 # configure magento
 php -f $WEBROOT/install.php -- \
     --license_agreement_accepted yes \
