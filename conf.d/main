@@ -16,7 +16,6 @@ tar -zxf /usr/local/src/magento*.tar.gz -C /var/www/
 rm -f /usr/local/src/magento*
 
 chown -R root:root $WEBROOT
-chown -R www-data:www-data $WEBROOT/var
 chown -R www-data:www-data $WEBROOT/media
 chown -R www-data:www-data $WEBROOT/app/etc
 
@@ -73,6 +72,9 @@ $MYSQL_BATCH --execute "use $DB_NAME; update cms_page SET content = '<div class=
 /etc/init.d/apache2 start
 rm -rf $WEBROOT/var/cache
 /etc/init.d/apache2 stop
+
+#Set ownership here as some files being written as root owner
+chown -R www-data:www-data $WEBROOT/var
 
 # stop mysql
 /etc/init.d/mysql stop
