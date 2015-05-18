@@ -33,7 +33,7 @@ $MYSQL_ADMIN create $DB_NAME
 $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
 
 # update apache configuration
-a2dissite default
+a2dissite 000-default
 a2ensite magento
 a2enmod rewrite
 
