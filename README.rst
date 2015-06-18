@@ -17,7 +17,7 @@ and on top of that:
    - Hourly cron job for maintenance.
 
 - SSL support out of the box.
-- `PHPMyAdmin`_ administration frontend for MySQL (listening on port
+- `Adminer`_ administration frontend for MySQL (listening on port
   12322 - uses SSL).
 - Postfix MTA (bound to localhost) to allow sending of email from web
   applications (e.g., password recovery)
@@ -31,4 +31,4 @@ Credentials *(passwords set at first boot)*
 
 .. _Magento: http://www.magentocommerce.com/
 .. _TurnKey Core: http://www.turnkeylinux.org/core
-.. _PHPMyAdmin: http://www.phpmyadmin.net/
+.. _Adminer: http://www.adminer.org/
