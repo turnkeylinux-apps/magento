@@ -79,6 +79,3 @@ chown -R www-data:www-data $WEBROOT/var
 # stop mysql
 /etc/init.d/mysql stop
 
-# Finishing up
-mv /usr/lib/inithooks/firstboot.d/15regen-sslcert /usr/lib/inithooks/firstboot.d/45regen-sslcert
-
