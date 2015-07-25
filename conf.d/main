@@ -73,7 +73,34 @@ $MYSQL_BATCH --execute "use $DB_NAME; update cms_page SET content = '<div class=
 rm -rf $WEBROOT/var/cache
 /etc/init.d/apache2 stop
 
-#Set ownership here as some files being written as root owner
+# Update installation to latest version
+
+cd $WEBROOT
+./mage mage-setup .
+./mage install http://connect20.magentocommerce.com/community Mage_Downloader --force
+chmod 700 mage
+./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
+
+# need to log in as administrator top create all admin DB tables
+chmod -R 755 $WEBROOT
+service apache2 start
+CURL="curl -c /tmp/cookie -b /tmp/cookie --tlsv1.0 --insecure"
+URL="https://127.0.0.1/index.php/admin"
+$CURL $URL > /tmp/html
+KEY=$(cat /tmp/html | grep form_key | sed 's|^.*value="||;s|".*$||')
+DATA="form_key=${KEY}&login%5Busername%5D=${ADMIN_NAME}&dummy=&login%5Bpassword%5D=${ADMIN_PASS}"
+$CURL -L --data $DATA $URL
+service apache2 stop
+
+# Mark all default messages as read
+#  as this will hide patch notifications, when building new version check for new patches before release
+$MYSQL_BATCH --execute "USE $DB_NAME; UPDATE adminnotification_inbox SET is_read=1;"
+
+# Re-index db so Magento doesn't complain when first launched 
+cd $WEBROOT/shell
+php indexer.php reindexall
+
+#Set permsissions and ownership here as some files being written as root owner
 chown -R www-data:www-data $WEBROOT/var
 
 # stop mysql
