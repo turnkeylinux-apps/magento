@@ -5,7 +5,7 @@ dl() {
     cd $2; curl -L -f -O $PROXY $1; cd -
 }
 
-VER="1.9.1.0"
+VER="1.9.1.1"
 URL="http://www.magentocommerce.com/downloads/assets/${VER}/magento-${VER}.tar.gz"
 
 dl $URL /usr/local/src
