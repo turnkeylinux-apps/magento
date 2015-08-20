@@ -11,6 +11,7 @@ Option:
 import sys
 import getopt
 import inithooks_cache
+
 import shutil
 import hashlib
 
@@ -74,6 +75,8 @@ def main():
 
     if domain == "DEFAULT":
         domain = DEFAULT_DOMAIN
+
+    inithooks_cache.write('APP_DOMAIN', domain)
 
     hashpass = hashlib.md5("qX" + password).hexdigest() + ":qX"
 
