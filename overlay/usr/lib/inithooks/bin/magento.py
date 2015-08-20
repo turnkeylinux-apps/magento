@@ -10,6 +10,7 @@ Option:
 
 import sys
 import getopt
+import inithooks_cache
 import shutil
 import hashlib
 
@@ -59,6 +60,8 @@ def main():
             "Magento Email",
             "Enter email address for the Magento 'admin' account.",
             "admin@example.com")
+
+    inithooks_cache.write('APP_EMAIL', email)
     
     if not domain:
         if 'd' not in locals():
