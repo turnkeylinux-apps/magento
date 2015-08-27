@@ -4,6 +4,10 @@ turnkey-magento-14.0 (1) turnkey; urgency=low
 
     - Updated to latest upstream version (v1.9.1.0)
 
+  * Replaced PHPMyAdmin with Adminer
+
+  * Hardened default SSL settings
+
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances. Here we only describe changes specific to this appliance.
 
