@@ -1,5 +1,5 @@
-Magento - Flexible eCommerce Platform
-=====================================
+Magento - Flexible Shopping Store eCommerce Platform
+====================================================
 
 `Magento`_ is a feature-rich, professional open-source eCommerce
 solution that offers merchants complete flexibility and control over the
