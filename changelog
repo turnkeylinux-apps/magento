@@ -2,7 +2,9 @@ turnkey-magento-14.0 (1) turnkey; urgency=low
 
   * Magento:
 
-    - Updated to latest upstream version (v1.9.1.0)
+    - Downloads latest public upstream version (v1.9.1.0)
+    - Then uses copmmandline tool 'mage' to update to real 
+      latest upstream version (1.9.2.1)
 
   * Replaced PHPMyAdmin with Adminer
 
