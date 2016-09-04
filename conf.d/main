@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 ADMIN_NAME=admin
-ADMIN_PASS=turnkey1 # requires atleast 1 number, argh!
+ADMIN_PASS=turnkey1 # requires at least 1 number, argh!
 ADMIN_MAIL=admin@example.com
 DOMAIN=127.0.0.1
 
@@ -12,12 +12,10 @@ DB_PASS=$(mcookie)
 WEBROOT=/var/www/magento
 
 # unpack tarball to webroot and set permissions
-tar -zxf /usr/local/src/magento*.tar.gz -C /var/www/
+tar -zxf /usr/local/src/magento-*.tgz -C /var/www/
 rm -f /usr/local/src/magento*
 
-chown -R root:root $WEBROOT
-chown -R www-data:www-data $WEBROOT/media
-chown -R www-data:www-data $WEBROOT/app/etc
+mv /usr/local/src/TurnKey $WEBROOT/app/code/
 
 # convenience execution variables
 MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
@@ -30,78 +28,57 @@ MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 $MYSQL_ADMIN create $DB_NAME
 
 # create database user with privileges on the database
-$MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
+$MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS';"
 
 # update apache configuration
 a2dissite 000-default
 a2ensite magento
 a2enmod rewrite
 
-# bugfix: PHP Extensions "0" must be loaded
-CONF=$WEBROOT/app/code/core/Mage/Install/etc/config.xml
-sed -i "s|<pdo_mysql/>|<pdo_mysql>1</pdo_mysql>|" $CONF
-
-# configure magento
-php -f $WEBROOT/install.php -- \
-    --license_agreement_accepted yes \
-    --locale en_US \
-    --timezone "Europe/London" \
-    --default_currency USD \
-    --db_host localhost \
-    --db_name $DB_NAME \
-    --db_user $DB_USER \
-    --db_pass $DB_PASS \
-    --url "http://$DOMAIN/" \
-    --secure_base_url "https://$DOMAIN/" \
-    --skip_url_validation yes \
-    --use_rewrites yes \
-    --use_secure yes \
-    --use_secure_admin yes \
-    --admin_firstname Store \
-    --admin_lastname Admin \
-    --admin_username $ADMIN_NAME \
-    --admin_password $ADMIN_PASS \
-    --admin_email "$ADMIN_MAIL" \
-    --admin_frontname admin \
-    --encryption_key $(mcookie)
-
-# create getting-started page
-$MYSQL_BATCH --execute "use $DB_NAME; update cms_page SET content = '<div class=\"page-title\"> <h2>Welcome to TurnKey Magento</h2> </div> <h3>Lets get you started:&nbsp;</h3> <p><span style=\"font-weight: normal; font-size: 12px;\"><br />-&nbsp;Log into the <a href=\"/admin\">administration panel</a> as <strong>$ADMIN_NAME</strong> and get going\!</span></p> <p><span style=\"font-weight: normal; font-size: 12px;\">-&nbsp;</span><a href=\"https://www.turnkeylinux.org/magento\">TurnKey Linux Magento appliance release notes</a></p> <p>-&nbsp;<a href=\"http://www.magentocommerce.com/wiki/welcome_to_the_magento_user_s_guide/welcome_to_the_magento_user_s_guide\">Magento user guide (everything you need to know to get started)</a></p> <p>-&nbsp;<a href=\"http://www.magentocommerce.com/knowledge-base\">Magento knowledge base (articles, tutorials, screencasts, documentation)</a></p>' where cms_page.page_id=2;"
-
-# bugfix: remove initial corrupted cache
-/etc/init.d/apache2 start
-rm -rf $WEBROOT/var/cache
-/etc/init.d/apache2 stop
-
-# Update installation to latest version
+# increase memory limit to upstream recommendation
+sed -i 's|^memory_limit.*|memory_limit = 756M|' /etc/php5/cli/php.ini
 
 cd $WEBROOT
-./mage mage-setup .
-./mage install http://connect20.magentocommerce.com/community Mage_Downloader --force
-chmod 700 mage
-./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
+composer install
+cd -
 
-# need to log in as administrator top create all admin DB tables
+# configure magento
+php -f $WEBROOT/bin/magento -- setup:install \
+    --language en_US \
+    --timezone "Europe/London" \
+    --currency USD \
+    --db-host localhost \
+    --db-name $DB_NAME \
+    --db-user $DB_USER \
+    --db-password $DB_PASS \
+    --base-url "http://$DOMAIN/" \
+    --base-url-secure "https://$DOMAIN/" \
+    --use-rewrites 1 \
+    --use-secure 1 \
+    --use-secure-admin 1 \
+    --admin-firstname Store \
+    --admin-lastname Admin \
+    --admin-user $ADMIN_NAME \
+    --admin-password $ADMIN_PASS \
+    --admin-email "$ADMIN_MAIL" \
+    --key $(mcookie)
+
+php -f $WEBROOT/bin/magento -- setup:static-content:deploy
+php -f $WEBROOT/bin/magento -- cache:flush
+php -f $WEBROOT/bin/magento -- indexer:reindex
+php -f $WEBROOT/bin/magento -- setup:di:compile
+
+ADMIN_URI=$( php -f $WEBROOT/bin/magento -- info:adminuri | grep -o '/.*$' )
+
+# create getting-started page
+$MYSQL_BATCH --execute "use $DB_NAME; update cms_page SET content = '<div class=\"page-title\"> <h2>Welcome to TurnKey Magento</h2> </div> <h3>Let\'s get you started:&nbsp;</h3> <p><span style=\"font-weight: normal; font-size: 12px;\"><br />-&nbsp;Log into the <a href=\"$ADMIN_URI\">administration panel</a> as <strong>$ADMIN_NAME</strong> and get going\!</span></p> <p><span style=\"font-weight: normal; font-size: 12px;\">-&nbsp;</span><a href=\"https://www.turnkeylinux.org/magento\">TurnKey Linux Magento appliance release notes</a></p> <p>-&nbsp;<a href=\"http://www.magentocommerce.com/wiki/welcome_to_the_magento_user_s_guide/welcome_to_the_magento_user_s_guide\">Magento user guide (everything you need to know to get started)</a></p> <p>-&nbsp;<a href=\"http://www.magentocommerce.com/knowledge-base\">Magento knowledge base (articles, tutorials, screencasts, documentation)</a></p>' where cms_page.page_id=2;"
+
 chmod -R 755 $WEBROOT
-service apache2 start
-CURL="curl -c /tmp/cookie -b /tmp/cookie --tlsv1.0 --insecure"
-URL="https://127.0.0.1/index.php/admin"
-$CURL $URL > /tmp/html
-KEY=$(cat /tmp/html | grep form_key | sed 's|^.*value="||;s|".*$||')
-DATA="form_key=${KEY}&login%5Busername%5D=${ADMIN_NAME}&dummy=&login%5Bpassword%5D=${ADMIN_PASS}"
-$CURL -L --data $DATA $URL
-service apache2 stop
+chown -R www-data:www-data $WEBROOT
 
 # Mark all default messages as read
 #  as this will hide patch notifications, when building new version check for new patches before release
 $MYSQL_BATCH --execute "USE $DB_NAME; UPDATE adminnotification_inbox SET is_read=1;"
-
-# Re-index db so Magento doesn't complain when first launched 
-cd $WEBROOT/shell
-php indexer.php reindexall
-
-#Set permsissions and ownership here as some files being written as root owner
-chown -R www-data:www-data $WEBROOT/var
 
 # stop mysql
 /etc/init.d/mysql stop
