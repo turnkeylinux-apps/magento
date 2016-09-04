@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    <add id="TurnKey_ComposerUpdates::a_menu_item" resource="TurnKey_ComposerUpdates::menu_1" title="Enable Composer updates" action="composerupdates/index/index" module="TurnKey_ComposerUpdates" sortOrder="1" parent="Magento_Backend::system_other_settings" dependsOnModule="Magento_Backend"/></menu>
+</config>
