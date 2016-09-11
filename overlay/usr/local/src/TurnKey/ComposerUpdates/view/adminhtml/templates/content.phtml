@@ -1,0 +1,33 @@
+<form class="form" method="post">
+    <fieldset class="fieldset">
+        <legend class="legend"><span>Please enter your public and private keys:</span></legend><br>
+        <div class="field required">
+            <label for="pubkey" class="label">
+                <span>Public Key</span>
+            </label>
+
+            <div class="control">
+                <input type="text" id="pubkey" name="pubkey" class="input-text">
+            </div>
+        </div>
+
+        <div class="field required">
+            <label for="privkey" class="label">
+                <span>Private Key</span>
+            </label>
+
+            <div class="control">
+                <input type="text" id="privkey" name="privkey" class="input-text">
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" class="action submit primary" title="Submit">
+                <span>Submit</span>
+            </button>
+        </div>
+    </div>
+    <div><input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey() ?>" /></div>
+</form>
