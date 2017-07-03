@@ -15,7 +15,7 @@ class Index extends \Magento\Backend\App\Action
     {
         $page = $this->resultPageFactory->create();  
         $page->setActiveMenu('TurnKey_ComposerUpdates::a_menu_item');
-        $page->getConfig()->getTitle()->prepend(__('Enable Composer Updates'));
+        $page->getConfig()->getTitle()->prepend(__('Save Magento Marketplace keys'));
 
         $pubkey = $this->getRequest()->getParam('pubkey');
         $privkey = $this->getRequest()->getParam('privkey');
@@ -35,7 +35,7 @@ class Index extends \Magento\Backend\App\Action
             fwrite($outfile, '{"http-basic": {"repo.magento.com": {"username": "' . $pubkey .  '", "password": "' . $privkey . '"}}}');
             fclose($outfile);
 
-            $messageBlock->addSuccess('Your keys were successfully saved at /var/www/magento/auth.json. This TurnKey Magento installation can now be upgraded with Composer.');
+            $messageBlock->addSuccess('Your keys were successfully saved at /var/www/magento/auth.json. They can now be used for Magento development tasks.');
         } else {
             $messageBlock->addError('Encountered an error trying to write to /var/www/magento/auth.json. Perhaps the permissions are not www-data:www-data.');
         }
