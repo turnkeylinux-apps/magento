@@ -3,6 +3,15 @@
 
 . /etc/default/inithooks
 
+# support partially preseeded headless deployments
+if [ -z "$APP_PRIVKEY" ] || [-z "$APP_PUBKEY" ]; then
+    if [ -n "$APP_PASS" ] && [ -n "$APP_EMAIL" ]; then
+        APP_PRIVKEY="DEFAULT"
+        APP_PUBKEY="DEFAULT"
+    fi
+fi
+
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
-$INITHOOKS_PATH/bin/magento.py --pass="$APP_PASS" --email="$APP_EMAIL" --domain="$APP_DOMAIN"
+$INITHOOKS_PATH/bin/magento.py --pass="$APP_PASS" --email="$APP_EMAIL" --domain="$APP_DOMAIN" \
+    --privkey="$APP_PRIVKEY" --pubkey="$APP_PUBKEY"
 
