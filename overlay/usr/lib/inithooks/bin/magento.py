@@ -6,6 +6,10 @@ Option:
     --email=    unless provided, will ask interactively
     --domain=   unless provided, will ask interactively
                 DEFAULT=www.example.com
+    --privkey=  unless provided, will ask interactively
+                DEFAULT=SKIP
+    --pubkey=   unless provided, will ask interactively
+                DEFAULT=SKIP
 """
 
 import sys
@@ -32,19 +36,14 @@ def usage(s=None):
 
 DEFAULT_DOMAIN="www.example.com"
 AUTHKEY_MESSAGE="""
-Please enter your Magento Marketplace account %s key here (optional).
-This is needed for upgrading the Magento installation through Composer.
+Please enter your Magento Marketplace account %s key here (optional). This is needed for upgrading the Magento installation through Composer.
 
 The list of your account keys can be found at:
 https://marketplace.magento.com/customer/accessKeys/list
 
-Alternatively, you can leave this blank now and
-configure your keys in the finished TurnKey Magento installation by
-navigating to "System -> Enable Composer updates" in the sidebar.
+Alternatively, you can skip this and configure your keys in the finished TurnKey Magento installation by navigating to "System -> Enable Composer updates" in the sidebar.
 
-You can also save the keys by invoking
-'composer update'
-in /var/www/magento or by creating an auth.json file manually.
+You can also save the keys by invoking 'composer update' in /var/www/magento or by creating an auth.json file manually.
 
 Please see this URL for more information:
 https://www.turnkeylinux.org/magento
@@ -120,6 +119,9 @@ def main():
             'OK',
             'Skip')[1]
 
+    if privkey == "DEFAULT":
+        privkey = "SKIP"
+
     if not pubkey:
         if 'd' not in locals():
             d = Dialog('TurnKey Linux - First boot configuration')
@@ -130,6 +132,9 @@ def main():
             '',
             'OK',
             'Skip')[1]
+
+    if pubkey == "DEFAULT":
+        pubkey = "SKIP"
 
     salt = executil.getoutput("grep key /var/www/magento/app/etc/env.php | cut -d\\\' -f 4")
 
@@ -145,14 +150,15 @@ def main():
     shutil.rmtree("/var/www/magento/var/cache", ignore_errors=True)
 
     # write auth
-    authfile = '/var/www/magento/auth.json'
-    with open(authfile, 'w') as f:
-        f.write('{"http-basic": {"repo.magento.com": {"username": "%s", "password": "%s"}}}' % (pubkey, privkey))
+    if privkey != "SKIP" and pubkey != "SKIP":
+        authfile = '/var/www/magento/auth.json'
+        with open(authfile, 'w') as f:
+            f.write('{"http-basic": {"repo.magento.com": {"username": "%s", "password": "%s"}}}' % (pubkey, privkey))
 
-    uid = pwd.getpwnam('www-data').pw_uid
-    gid = grp.getgrnam('www-data').gr_gid
+        uid = pwd.getpwnam('www-data').pw_uid
+        gid = grp.getgrnam('www-data').gr_gid
 
-    os.chown(authfile, uid, gid)
+        os.chown(authfile, uid, gid)
 
 if __name__ == "__main__":
     main()
