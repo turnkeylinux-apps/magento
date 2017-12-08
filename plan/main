@@ -1,23 +1,13 @@
 #include <turnkey/base>
+#include <turnkey/lamp>
 
-apache2
-webmin-apache
 
-apache2-mpm-prefork
-mariadb-server
-webmin-mysql
-
-php5-mysql
-libapache2-mod-php5
-webmin-phpini
-
-adminer
-
-php5-cli
-php5-curl
-php5-gd
-php5-mcrypt
-php5-intl
-php5-xsl
-
-patch
+php-cli
+php-curl
+php-gd
+php-mcrypt
+php-mbstring
+php-zip
+php-intl
+php-xsl
+php-soap

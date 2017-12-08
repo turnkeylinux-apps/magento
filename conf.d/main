@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-VER="2.1.7"
+VER="2.2.1"
 URL=https://github.com/magento/magento2
 
 ADMIN_NAME=admin
@@ -23,7 +23,7 @@ MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
 MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 
 # start mysql server
-/etc/init.d/mysql start
+service mysql start
 
 # create database
 $MYSQL_ADMIN create $DB_NAME
@@ -37,7 +37,7 @@ a2ensite magento
 a2enmod rewrite
 
 # increase memory limit to upstream recommendation
-sed -i 's|^memory_limit.*|memory_limit = 756M|' /etc/php5/cli/php.ini
+sed -i 's|^memory_limit.*|memory_limit = 756M|' /etc/php/7.0/cli/php.ini
 
 cd $WEBROOT
 composer install
@@ -64,7 +64,7 @@ php -f $WEBROOT/bin/magento -- setup:install \
     --admin-email "$ADMIN_MAIL" \
     --key $(mcookie)
 
-php -f $WEBROOT/bin/magento -- setup:static-content:deploy
+php -f $WEBROOT/bin/magento -- setup:static-content:deploy -f
 php -f $WEBROOT/bin/magento -- cache:flush
 php -f $WEBROOT/bin/magento -- indexer:reindex
 php -f $WEBROOT/bin/magento -- setup:di:compile
@@ -82,6 +82,6 @@ chown -R www-data:www-data $WEBROOT
 $MYSQL_BATCH --execute "USE $DB_NAME; UPDATE adminnotification_inbox SET is_read=1;"
 
 # stop mysql
-/etc/init.d/mysql stop
+service mysql stop
 
 
