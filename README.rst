@@ -1,4 +1,4 @@
-Magento 1.9 - Flexible Shopping Store eCommerce Platform
+Magento 2.2 - Flexible Shopping Store eCommerce Platform
 ========================================================
 
 `Magento`_ is a feature-rich, professional open-source eCommerce
@@ -13,7 +13,7 @@ and on top of that:
 
 - Magento configurations:
    
-   - Installed from upstream source code to /var/www/magento
+   - Installed from upstream source code (via git/composer) to /var/www/magento
 
      **Security notes**: 
      
@@ -21,9 +21,6 @@ and on top of that:
        configured to install automatically. See below for updating
        Magento.
 
-     - Magento 1.9.X **IS NOT** vulnerable to CVE-2016-4010 remote PHP
-       code execution vulnerability.
-     
    - Hourly cron job for maintenance.
 
 - SSL support out of the box.
