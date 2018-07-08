@@ -44,7 +44,8 @@ up-to-date information.
 Credentials *(passwords set at first boot)*
 -------------------------------------------
 
--  Webmin, SSH, MySQL, Adminer: username **root**
+-  Webmin, SSH, MySQL: username **root**
+-  Adminer: username **adminer**
 
 .. _Magento Security Alerts: https://magento.com/security
 .. _Magento 1.X upgrade docs: http://devdocs.magento.com/guides/m1x/install/installing_upgrade_details.html
