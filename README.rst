@@ -15,11 +15,9 @@ and on top of that:
    
    - Installed from upstream source code (via git/composer) to /var/www/magento
 
-     **Security notes**: 
-     
-     - Updates to Magento may require supervision so they **ARE NOT**
-       configured to install automatically. See below for updating
-       Magento.
+     **Security note**: Updates to Magento may require supervision so
+     they **ARE NOT** configured to install automatically. See below for
+     updating Magento.
 
    - Hourly cron job for maintenance.
 
@@ -38,8 +36,7 @@ For instructions on upgrading Magento 1.X please refer to the `Magento
 
 To migrate your site from 1.X to 2.X please refer to `Magento 2 migration guide`_.
 
-We recommend signing up for `Magento Security Alerts`_ for the latest
-up-to-date information.
+We recommend signing up to `Magento Security Alerts`_ for latest updates.
 
 Credentials *(passwords set at first boot)*
 -------------------------------------------
@@ -47,10 +44,10 @@ Credentials *(passwords set at first boot)*
 -  Webmin, SSH, MySQL: username **root**
 -  Adminer: username **adminer**
 
-.. _Magento Security Alerts: https://magento.com/security
+.. _Magento Security Alerts: https://magento.com/security/sign-up
 .. _Magento 1.X upgrade docs: http://devdocs.magento.com/guides/m1x/install/installing_upgrade_details.html
 .. _Magento 2 migration guide: http://devdocs.magento.com/guides/v2.0/migration/bk-migration-guide.html
 
-.. _Magento: http://www.magentocommerce.com/
+.. _Magento: https://www.magentocommerce.com/
 .. _TurnKey Core: https://www.turnkeylinux.org/core
-.. _Adminer: http://www.adminer.org/
+.. _Adminer: https://www.adminer.org/
