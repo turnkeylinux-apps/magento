@@ -3,7 +3,7 @@ turnkey-magento-15.0 (1) turnkey; urgency=low
   * Upgraded to the latest upstream source version (v2.2.5)
 
   * update buildcode to work with PHP7.0
-    [ Vlad Kuzmenko <vlad.work.here@gmail.com> ]
+    [ Vlad Kuzmenko <vlad@turnkeylinux.org> ]
 
   * Install Adminer directly from stretch/main repo
 
