@@ -1,3 +1,14 @@
+turnkey-magento-15.1 (1) turnkey; urgency=low
+
+  * Upgrade to latest upstream source version - v2.2.6.
+
+  * Rebuild to resolve inadvertent removal of mariadb during sec-updates
+    - part of #1246.
+
+  * Update conf script to always install latest stable release.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.com>  Thu, 22 Nov 2018 10:34:55 +1100
+
 turnkey-magento-15.0 (1) turnkey; urgency=low
 
   * Upgraded to the latest upstream source version (v2.2.5)
