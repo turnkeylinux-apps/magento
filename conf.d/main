@@ -1,6 +1,10 @@
 #!/bin/bash -ex
 
-VER="2.2.5"
+# get latest stable version from GH releases
+GH_API=https://api.github.com/repos/magento/magento2/releases
+VER=$(curl -s $GH_API |grep -oP '"tag_name": "\K(.*)(?=")' \
+    | sort --version-sort | tail -1)
+
 URL=https://github.com/magento/magento2
 
 ADMIN_NAME=admin
