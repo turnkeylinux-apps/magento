@@ -1,3 +1,15 @@
+turnkey-magento-15.2 (1) turnkey; urgency=low
+
+  * Upgrade to latest upstream source 2.2.x version - v2.2.7.
+
+  * Reduce inithook text relating to Magento keys, moved to doc page.
+    - closes #1299.
+
+  * Tweak conf script to skip release candidate versions and stay on v2.2.x.
+    v2.3.x requires PHP7.1+
+
+ -- Jeremy Davis <jeremy@turnkeylinux.com>  Thu, 07 Feb 2019 14:19:54 +1100
+
 turnkey-magento-15.1 (1) turnkey; urgency=low
 
   * Upgrade to latest upstream source version - v2.2.6.
