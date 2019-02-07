@@ -36,17 +36,12 @@ def usage(s=None):
 
 DEFAULT_DOMAIN="www.example.com"
 AUTHKEY_MESSAGE="""
-Please enter your Magento Marketplace account %s key here (optional). This is needed for upgrading the Magento installation through Composer.
+Please enter your Magento Marketplace account %s key here (optional). This is needed for upgrading the Magento installation via commandline. It is also required for third party integrations.
 
-The list of your account keys can be found at:
-https://marketplace.magento.com/customer/accessKeys/list
+Keys can be added later if not provided now.
 
-Alternatively, you can skip this and configure your keys in the finished TurnKey Magento installation by navigating to "System -> Enable Composer updates" in the sidebar.
-
-You can also save the keys by invoking 'composer update' in /var/www/magento or by creating an auth.json file manually.
-
-Please see this URL for more information:
-https://www.turnkeylinux.org/magento
+For more information, please see:
+https://www.turnkeylinux.org/docs/magento
 
 """
 
