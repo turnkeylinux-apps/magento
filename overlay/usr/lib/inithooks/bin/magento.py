@@ -117,7 +117,7 @@ def main():
     if privkey == "DEFAULT":
         privkey = "SKIP"
 
-    if not pubkey:
+    if privkey and not pubkey:
         if 'd' not in locals():
             d = Dialog('TurnKey Linux - First boot configuration')
 
