@@ -1,3 +1,14 @@
+turnkey-magento-15.3 (1) turnkey; urgency=low
+
+  * Update to latest upstream source 2.2.x version - v2.2.8.
+
+  * Fixed correct display of Admin url in confconsole - closes #1167.
+    [ Stefan Davis ]
+
+  * Updated readme link to Magento 2 update docs (now links to 2.2.x).
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Tue, 16 Apr 2019 13:51:30 +1000
+
 turnkey-magento-15.2 (1) turnkey; urgency=low
 
   * Upgrade to latest upstream source 2.2.x version - v2.2.7.

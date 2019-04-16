@@ -46,7 +46,7 @@ Credentials *(passwords set at first boot)*
 
 .. _Magento Security Alerts: https://magento.com/security/sign-up
 .. _Magento 1.X upgrade docs: http://devdocs.magento.com/guides/m1x/install/installing_upgrade_details.html
-.. _Magento 2 migration guide: http://devdocs.magento.com/guides/v2.0/migration/bk-migration-guide.html
+.. _Magento 2 migration guide: http://devdocs.magento.com/guides/v2.2/migration/bk-migration-guide.html
 
 .. _Magento: https://www.magentocommerce.com/
 .. _TurnKey Core: https://www.turnkeylinux.org/core
