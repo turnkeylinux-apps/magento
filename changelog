@@ -1,3 +1,13 @@
+turnkey-magento-15.4 (1) turnkey; urgency=low
+
+  * Auto-detect latest upstream version
+
+  * Updated to latest upstream version
+
+  * Update to PHP 7.2
+
+ -- Stefan Davis <stefan@turnkeylinux.org>  Mon, 13 May 2019 01:00:46 +0000
+
 turnkey-magento-15.3 (1) turnkey; urgency=low
 
   * Update to latest upstream source 2.2.x version - v2.2.8.
