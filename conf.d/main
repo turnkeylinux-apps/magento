@@ -1,12 +1,13 @@
 #!/bin/bash -ex
 
+# TEMP: use static version
 # get latest stable version from GH releases
-GH_API=https://api.github.com/repos/magento/magento2/releases
-# ignore release candidates & v2.3.x (for now - requires PHP7.1+)
-VERS="$(gh_releases magento/magento2)"
-VER="$(echo "$VERS" \
-    | grep -vi rc \
-    | sort --version-sort | tail -1)"
+# ignore release candidates 
+#VERS="$(gh_releases magento/magento2)"
+#VER="$(echo "$VERS" \
+#    | grep -vi rc \
+#    | sort --version-sort | tail -1)"
+VER=2.3.1
 
 URL=https://github.com/magento/magento2
 
