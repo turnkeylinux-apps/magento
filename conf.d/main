@@ -1,13 +1,9 @@
 #!/bin/bash -ex
 
-# TEMP: use static version
 # get latest stable version from GH releases
-# ignore release candidates 
-#VERS="$(gh_releases magento/magento2)"
-#VER="$(echo "$VERS" \
-#    | grep -vi rc \
-#    | sort --version-sort | tail -1)"
-VER=2.3.1
+RELEASES="$(gh_releases magento/magento2)"
+VER=$(echo "${RELEASES}" | grep -vi rc | grep -vi beta \
+    grep -vi alpha | sort --version-sort | tail -1)
 
 URL=https://github.com/magento/magento2
 
