@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """Set Magento admin password, email, domain and auth keys
 
 Option:
@@ -15,6 +15,7 @@ Option:
 import sys
 import getopt
 import inithooks_cache
+import subprocess
 
 import shutil
 import hashlib
@@ -22,16 +23,15 @@ import hashlib
 import pwd
 import grp
 import os
-import executil
 
 from dialog_wrapper import Dialog
 from mysqlconf import MySQL
 
 def usage(s=None):
     if s:
-        print >> sys.stderr, "Error:", s
-    print >> sys.stderr, "Syntax: %s [options]" % sys.argv[0]
-    print >> sys.stderr, __doc__
+        print("Error:", s, file=sys.stderr)
+    print("Syntax: %s [options]" % sys.argv[0], file=sys.stderr)
+    print(__doc__, file=sys.stderr)
     sys.exit(1)
 
 DEFAULT_DOMAIN="www.example.com"
@@ -50,7 +50,7 @@ def main():
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
                                        ['help', 'pass=', 'email=', 'domain=',
                                         'privkey=', 'pubkey='])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(e)
 
     email = ""
@@ -131,15 +131,17 @@ def main():
     if pubkey == "DEFAULT":
         pubkey = "SKIP"
 
-    salt = executil.getoutput("grep key /var/www/magento/app/etc/env.php | cut -d\\\' -f 4")
+    salt = subprocess.check_output([
+        "grep", "key", "/var/www/magento/app/etc/env.php"
+    ], text=True).split("'")[3]
 
-    hashpass = hashlib.sha256(salt + password).hexdigest() + ':' + salt + ':1'
+    hashpass = hashlib.sha256((salt + password).encode()).hexdigest() + ':' + salt + ':1'
 
     m = MySQL()
-    m.execute('UPDATE magento.admin_user SET email=\"%s\" WHERE username=\"admin\";' % email)
-    m.execute('UPDATE magento.admin_user SET password=\"%s\" WHERE username=\"admin\";' % hashpass)
-    m.execute('UPDATE magento.core_config_data SET value=\"http://%s/\" WHERE path=\"web/unsecure/base_url\";' % (domain))
-    m.execute('UPDATE magento.core_config_data SET value=\"https://%s/\" WHERE path=\"web/secure/base_url\";' % (domain))
+    m.execute('UPDATE magento.admin_user SET email=%s WHERE username=\"admin\";', (email,))
+    m.execute('UPDATE magento.admin_user SET password=%s WHERE username=\"admin\";', (hashpass,))
+    m.execute('UPDATE magento.core_config_data SET value=%s WHERE path=\"web/unsecure/base_url\";', (f'http://{domain}/',))
+    m.execute('UPDATE magento.core_config_data SET value=%s WHERE path=\"web/secure/base_url\";', (f'https://{domain}/',))
 
     # delete cache so it will be rebuilt for new domain
     shutil.rmtree("/var/www/magento/var/cache", ignore_errors=True)

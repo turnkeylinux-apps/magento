@@ -1,8 +1,21 @@
 #!/bin/bash -ex
 
+wget -qO - \
+    /usr/share/keyrings/elasticsearch.gpg https://artifacts.elastic.co/GPG-KEY-elasticsearch \
+    | gpg --dearmor > /usr/share/keyrings/elasticsearch.gpg
+
+apt update
+apt install elasticsearch
+
+service elasticsearch start
+
+while [[ -z $(netstat -nlt | grep :9200) ]]; do
+    sleep 1
+done
+
 # get latest stable version from GH releases
 RELEASES="$(gh_releases magento/magento2)"
-VER=$(echo "${RELEASES}" | grep -vi rc | grep -vi beta \
+VER=$(echo "${RELEASES}" | grep -vi rc | grep -vi beta |\
     grep -vi alpha | sort --version-sort | tail -1)
 
 URL=https://github.com/magento/magento2
@@ -41,7 +54,7 @@ a2ensite magento
 a2enmod rewrite
 
 # increase memory limit to upstream recommendation
-sed -i 's|^memory_limit.*|memory_limit = 756M|' /etc/php/7.2/cli/php.ini
+sed -i 's|^memory_limit.*|memory_limit = 756M|' /etc/php/7.3/cli/php.ini
 
 cd $WEBROOT
 composer install
@@ -66,7 +79,8 @@ php -f $WEBROOT/bin/magento -- setup:install \
     --admin-user $ADMIN_NAME \
     --admin-password $ADMIN_PASS \
     --admin-email "$ADMIN_MAIL" \
-    --key $(mcookie)
+    --key $(mcookie) \
+    --elasticsearch-host "localhost"
 
 php -f $WEBROOT/bin/magento -- setup:static-content:deploy -f
 php -f $WEBROOT/bin/magento -- cache:flush
@@ -88,6 +102,9 @@ chown -R www-data:www-data $WEBROOT
 #  as this will hide patch notifications, when building new version check for new patches before release
 $MYSQL_BATCH --execute "USE $DB_NAME; UPDATE adminnotification_inbox SET is_read=1;"
 
+php -f $WEBROOT/bin/magento -- cache:clean
+
 # stop mysql
 service mysql stop
+service elasticsearch stop
 
