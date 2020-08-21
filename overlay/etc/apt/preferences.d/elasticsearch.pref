@@ -1,0 +1,7 @@
+Package: *
+Pin: origin "artifacts.elastic.co"
+Pin-Priority: 10
+
+Package: elasticsearch
+Pin: origin "artifacts.elastic.co"
+Pin-Priority: 500
