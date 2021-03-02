@@ -57,7 +57,8 @@ a2enmod rewrite
 sed -i 's|^memory_limit.*|memory_limit = 756M|' /etc/php/7.3/cli/php.ini
 
 cd $WEBROOT
-composer install
+chown www-data:www-data -R $WEBROOT
+turnkey-composer install
 cd -
 
 # configure magento
